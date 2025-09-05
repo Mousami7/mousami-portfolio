@@ -15,26 +15,7 @@ const backToTopBtn = document.getElementById('backToTop');
 const contactForm = document.getElementById('contactForm');
 const skillProgressBars = document.querySelectorAll('.skill-progress');
 
-// Theme Management
-let currentTheme = localStorage.getItem('theme') || 'light';
-document.documentElement.setAttribute('data-theme', currentTheme);
-updateThemeIcon();
-
-function toggleTheme() {
-    currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    localStorage.setItem('theme', currentTheme);
-    updateThemeIcon();
-}
-
-function updateThemeIcon() {
-    const icon = themeToggle.querySelector('i');
-    if (currentTheme === 'dark') {
-        icon.className = 'fas fa-sun';
-    } else {
-        icon.className = 'fas fa-moon';
-    }
-}
+// Single theme - no toggle needed
 
 // Navigation
 function toggleNavMenu() {
@@ -50,19 +31,11 @@ function closeNavMenu() {
 // Navbar scroll effect
 function handleNavbarScroll() {
     if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+        navbar.style.background = 'rgba(15, 15, 35, 0.95)';
+        navbar.style.boxShadow = '0 2px 20px rgba(139, 92, 246, 0.4)';
     } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.boxShadow = 'none';
-    }
-    
-    if (currentTheme === 'dark') {
-        if (window.scrollY > 100) {
-            navbar.style.background = 'rgba(17, 24, 39, 0.98)';
-        } else {
-            navbar.style.background = 'rgba(17, 24, 39, 0.95)';
-        }
+        navbar.style.background = 'rgba(15, 15, 35, 0.9)';
+        navbar.style.boxShadow = '0 8px 32px rgba(139, 92, 246, 0.3)';
     }
 }
 
@@ -211,15 +184,42 @@ function typeWriter(element, text, speed = 100) {
     type();
 }
 
-// Parallax effect for floating shapes
+// Enhanced parallax effect for floating shapes
 function handleParallax() {
     const shapes = document.querySelectorAll('.shape');
     const scrolled = window.pageYOffset;
     
     shapes.forEach((shape, index) => {
-        const speed = 0.5 + (index * 0.1);
+        const speed = 0.3 + (index * 0.1);
         const yPos = -(scrolled * speed);
-        shape.style.transform = `translateY(${yPos}px)`;
+        const xPos = Math.sin(scrolled * 0.001 + index) * 20;
+        shape.style.transform = `translate(${xPos}px, ${yPos}px) rotate(${scrolled * 0.1}deg)`;
+    });
+}
+
+// GitHub-style scroll reveal animations
+function setupScrollReveal() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+                entry.target.classList.add('revealed');
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all cards and sections
+    document.querySelectorAll('.achievement-card, .activity-card, .project-card, .skill-item').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        observer.observe(el);
     });
 }
 
@@ -244,30 +244,71 @@ function setupIntersectionObserver() {
     });
 }
 
-// Particle effect for hero section
+// Enhanced particle effect for hero section
 function createParticles() {
     const hero = document.querySelector('.hero');
-    const particleCount = 50;
+    const particleCount = 80;
     
     for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
+        const size = Math.random() * 3 + 1;
+        const duration = Math.random() * 8 + 4;
+        const delay = Math.random() * 5;
+        
         particle.style.cssText = `
             position: absolute;
-            width: 2px;
-            height: 2px;
-            background: var(--primary-color);
+            width: ${size}px;
+            height: ${size}px;
+            background: linear-gradient(45deg, #2563eb, #3b82f6, #f59e0b);
             border-radius: 50%;
-            opacity: 0.3;
+            opacity: ${Math.random() * 0.6 + 0.2};
             pointer-events: none;
-            animation: particle-float ${3 + Math.random() * 4}s linear infinite;
+            animation: particle-float ${duration}s linear infinite;
             left: ${Math.random() * 100}%;
             top: ${Math.random() * 100}%;
-            animation-delay: ${Math.random() * 2}s;
+            animation-delay: ${delay}s;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.6);
         `;
         hero.appendChild(particle);
     }
 }
+
+// GitHub-style typing animation
+function createTypingEffect() {
+    const heroTitle = document.querySelector('.hero-title');
+    if (!heroTitle) return;
+    
+    const text = heroTitle.textContent;
+    heroTitle.textContent = '';
+    
+    let i = 0;
+    const typeWriter = () => {
+        if (i < text.length) {
+            heroTitle.textContent += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, 100);
+        } else {
+            // Add cursor blink effect
+            const cursor = document.createElement('span');
+            cursor.textContent = '|';
+            cursor.style.animation = 'blink 1s infinite';
+            heroTitle.appendChild(cursor);
+        }
+    };
+    
+    setTimeout(typeWriter, 1000);
+}
+
+// Add cursor blink animation
+const cursorStyle = document.createElement('style');
+cursorStyle.textContent = `
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+    }
+`;
+document.head.appendChild(cursorStyle);
 
 // Add particle animation to CSS
 const style = document.createElement('style');
@@ -450,18 +491,10 @@ document.addEventListener('DOMContentLoaded', function() {
     setupSkillItems();
     createParticles();
     setupImageUpload();
-    
-    // Start typing animation for hero title
-    const heroTitle = document.querySelector('.hero-title');
-    if (heroTitle) {
-        const originalText = heroTitle.textContent;
-        setTimeout(() => {
-            typeWriter(heroTitle, originalText, 50);
-        }, 1000);
-    }
+    createTypingEffect();
+    setupScrollReveal();
     
     // Event listeners
-    themeToggle.addEventListener('click', toggleTheme);
     navToggle.addEventListener('click', toggleNavMenu);
     backToTopBtn.addEventListener('click', scrollToTop);
     contactForm.addEventListener('submit', handleContactForm);
@@ -495,12 +528,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Escape key to close mobile menu
         if (e.key === 'Escape') {
             closeNavMenu();
-        }
-        
-        // Ctrl/Cmd + K to toggle theme
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            toggleTheme();
         }
     });
     
