@@ -86,28 +86,22 @@ function animateSkillBars() {
 
 // Contact form handling
 function handleContactForm(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(contactForm);
     const submitBtn = contactForm.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
+    const emailField = contactForm.querySelector('input[name="email"]');
+    const replyToField = contactForm.querySelector('input[name="_replyto"]');
+    
+    // Set the reply-to field to the user's email
+    if (emailField && replyToField) {
+        replyToField.value = emailField.value;
+    }
     
     // Show loading state
     submitBtn.innerHTML = '<span class="loading"></span> Sending...';
     submitBtn.disabled = true;
     
-    // Simulate form submission (replace with actual form handling)
-    setTimeout(() => {
-        // Success message
-        showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
-        
-        // Reset form
-        contactForm.reset();
-        
-        // Reset button
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    }, 2000);
+    // Let the form submit naturally to Formspree
+    // Formspree will handle the submission and redirect
 }
 
 // Notification system
