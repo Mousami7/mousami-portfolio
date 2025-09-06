@@ -335,24 +335,18 @@ function setupSocialLinks() {
     
     socialLinks.forEach(link => {
         link.addEventListener('click', (e) => {
-            e.preventDefault();
+            // Don't prevent default - let the links work normally
+            const href = link.getAttribute('href');
             const title = link.getAttribute('title');
             
-            // Handle different social links
-            switch(title) {
-                case 'GitHub':
-                    window.open('https://github.com/yourusername', '_blank');
-                    break;
-                case 'LinkedIn':
-                    window.open('https://linkedin.com/in/yourusername', '_blank');
-                    break;
-                case 'YouTube':
-                    window.open('https://youtube.com/@yourchannel', '_blank');
-                    break;
-                case 'Download CV':
-                    downloadCV();
-                    break;
+            // Only handle special cases, let normal links work
+            if (title === 'Download CV') {
+                // CV download is already handled by the download attribute
+                return;
             }
+            
+            // For external links, they should work normally with target="_blank"
+            // No need to prevent default or override behavior
         });
     });
 }
