@@ -6,6 +6,9 @@ AOS.init({
     offset: 100
 });
 
+// EmailJS setup (optional - for direct email sending)
+// emailjs.init('YOUR_PUBLIC_KEY');
+
 // DOM Elements
 const navbar = document.getElementById('navbar');
 const navToggle = document.getElementById('nav-toggle');
@@ -84,24 +87,39 @@ function animateSkillBars() {
     });
 }
 
-// Contact form handling
+// Contact form handling - Simple mailto approach
 function handleContactForm(e) {
+    e.preventDefault();
+    
     const submitBtn = contactForm.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
-    const emailField = contactForm.querySelector('input[name="email"]');
-    const replyToField = contactForm.querySelector('input[name="_replyto"]');
-    
-    // Set the reply-to field to the user's email
-    if (emailField && replyToField) {
-        replyToField.value = emailField.value;
-    }
     
     // Show loading state
-    submitBtn.innerHTML = '<span class="loading"></span> Sending...';
+    submitBtn.innerHTML = '<span class="loading"></span> Opening Email...';
     submitBtn.disabled = true;
     
-    // Let the form submit naturally to Formspree
-    // Formspree will handle the submission and redirect
+    // Get form data
+    const formData = new FormData(contactForm);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const subject = formData.get('subject');
+    const message = formData.get('message');
+    
+    // Create mailto link
+    const mailtoLink = `mailto:soni.mousami7@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+        `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+    )}`;
+    
+    // Open email client
+    window.location.href = mailtoLink;
+    
+    // Show success message
+    setTimeout(() => {
+        showNotification('Email client opened! Please send the email to complete your message.', 'success');
+        contactForm.reset();
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }, 1000);
 }
 
 // Notification system
