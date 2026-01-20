@@ -887,6 +887,41 @@ section {
     font-weight: 600;
 }
 
+.cert-image-container {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    border-radius: 15px;
+    overflow: hidden;
+    background: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.cert-image-container:hover {
+    border-color: var(--primary-color);
+    transform: scale(1.02);
+}
+
+.cert-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.cert-image:hover {
+    transform: scale(1.05);
+}
+
+.cert-pdf {
+    width: 100%;
+    min-height: 300px;
+    height: auto;
+    border: none;
+    border-radius: 10px;
+}
+
 /* Gallery Section */
 .gallery {
     padding: 100px 0;
